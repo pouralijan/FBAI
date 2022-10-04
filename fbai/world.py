@@ -1,7 +1,7 @@
 from time import sleep
 import pygame
 import random
-from typing import Any, List, Sequence, Union
+from typing import Sequence, Union
 from pygame.sprite import AbstractGroup, Sprite
 
 
@@ -17,8 +17,6 @@ class PipeSprint(pygame.sprite.Sprite):
         if offset:
             self.image = self.image.subsurface((0, 0, self.image.get_width(),800 - (offset.image.get_height() + 100 + 150 )))
             self.rect = self.image.get_rect()
-            print(f"Offset.rect: {offset.rect}")
-            print(f"self.rect: {self.rect}")
             self.rect.x = offset.rect.x
             self.rect.y = offset.rect.height + 100
         else:
@@ -26,7 +24,6 @@ class PipeSprint(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(self.image, 180)
             self.rect = self.image.get_rect()
             self.rect.y = 0
-            print(self.rect)
         self.rect.x = 600
 
     def update(self):
@@ -55,12 +52,11 @@ class Base(pygame.sprite.Sprite):
         self.image = self.assets.base
         center = (600 / 2, 800 - (self.assets.base.get_height()/2))
         self.rect = self.image.get_rect(center=center)
-        print(self.rect)
         
 class World(pygame.sprite.Group):
     def __init__(self, *sprites: Union[Sprite, Sequence[Sprite]]) -> None:
         super().__init__(*sprites)
-        self.add([Background(), Base(), Pipe()])
+        self.add([Base(), Pipe()])
 
     def update(self):
         last_sprite = self.sprites()[-1]

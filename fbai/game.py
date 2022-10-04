@@ -1,5 +1,5 @@
 import pygame
-from world import World
+from world import Background, World
 from bird import Bird
 
 import yaml
@@ -20,6 +20,7 @@ class Game:
 
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.player = pygame.sprite.GroupSingle(Bird())
+        self.background = pygame.sprite.GroupSingle(Background())
         self.world = World()
 
     def __del__(self):
@@ -30,6 +31,7 @@ class Game:
             if event.type == pygame.QUIT:
                 self.is_running = False
             if event.type == self.screen_update:
+                self.background.draw(self.screen)
                 self.world.update()
                 self.world.draw(self.screen)
                 self.player.update()
@@ -39,8 +41,14 @@ class Game:
                     for player in self.player.sprites():
                         player.jump()
 
+    def check_collision(self):
+        if pygame.sprite.spritecollide(self.player.sprite, self.world, False):
+            print("Game Over ...")
+            return True
+        return False
     def run(self):
         while self.is_running:
             self.chech_event()
+            self.is_running = not self.check_collision()
             pygame.display.update()
             self.clock.tick(30)
