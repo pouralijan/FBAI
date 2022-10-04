@@ -9,3 +9,8 @@ poetry update
 poetry shell
 poetry run python fbai
 ```
+
+
+## ToDoList
+
+- [ ] Add AI
