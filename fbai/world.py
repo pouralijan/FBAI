@@ -8,9 +8,11 @@ from pygame.sprite import AbstractGroup, Sprite
 from assets import Assets
 
 class PipeSprint(pygame.sprite.Sprite):
-    def __init__(self, offset : pygame.sprite.Sprite = None, *groups: AbstractGroup) -> None:
+    def __init__(self, offset : pygame.sprite.Sprite = None, score_signal = None, *groups: AbstractGroup) -> None:
         super().__init__(*groups)
         assets = Assets()
+        self.score_signal = score_signal
+        self.signal_sent = False
 
         self.image = assets.pipe
         self.speed = 3
@@ -27,14 +29,19 @@ class PipeSprint(pygame.sprite.Sprite):
         self.rect.x = 600
 
     def update(self):
+        if self.rect.x < 200 and not self.signal_sent:
+            if self.score_signal:
+                self.score_signal()
+                self.signal_sent = True
         if self.rect.x < self.image.get_width() * -2:
             self.kill()
         self.rect.x -= self.speed
 
 class Pipe(pygame.sprite.Group):
-    def __init__(self, *sprites: Union[Sprite, Sequence[Sprite]]) -> None:
+    def __init__(self, score_signal, *sprites: Union[Sprite, Sequence[Sprite]]) -> None:
         super().__init__(*sprites)
-        up = PipeSprint()
+        self.score_signal = score_signal
+        up = PipeSprint(score_signal = score_signal)
         down = PipeSprint(up)
         self.add([up, down])
         
@@ -54,14 +61,15 @@ class Base(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=center)
         
 class World(pygame.sprite.Group):
-    def __init__(self, *sprites: Union[Sprite, Sequence[Sprite]]) -> None:
+    def __init__(self, score_signal =None,*sprites: Union[Sprite, Sequence[Sprite]]) -> None:
         super().__init__(*sprites)
-        self.add([Base(), Pipe()])
+        self.score_signal = score_signal
+        self.add([Base(), Pipe(self.score_signal)])
 
     def update(self):
         last_sprite = self.sprites()[-1]
         if hasattr(last_sprite, "rect") and last_sprite.rect.x < 400:
-            self.add([Pipe()])
+            self.add([Pipe(self.score_signal)])
         
         for sprite in self.sprites():
             sprite.update()

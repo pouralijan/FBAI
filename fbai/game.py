@@ -21,10 +21,18 @@ class Game:
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.player = pygame.sprite.GroupSingle(Bird())
         self.background = pygame.sprite.GroupSingle(Background())
-        self.world = World()
+        self.world = World(score_signal=self.score_signal)
+        self.score = 0
+
+        self.font = pygame.font.SysFont("comicsans", 32)
+        self.score_label = self.font.render("Score: " + str(self.score),1,(255,255,255))
 
     def __del__(self):
         pygame.quit()
+
+    def score_signal(self):
+        self.score += 1
+        self.score_label = self.font.render("Score: " + str(self.score),1,(255,255,255))
 
     def chech_event(self):
         for event in pygame.event.get():
@@ -36,6 +44,7 @@ class Game:
                 self.world.draw(self.screen)
                 self.player.update()
                 self.player.draw(self.screen)
+                self.screen.blit(self.score_label, (self.width - self.score_label.get_width() - 15, 10))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     for player in self.player.sprites():
