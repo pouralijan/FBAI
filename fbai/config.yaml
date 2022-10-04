@@ -1,0 +1,4 @@
+game:
+  display:
+    width: !!int 600
+    hight: !!int 800

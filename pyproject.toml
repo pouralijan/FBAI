@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "fbai"
+version = "0.1.0"
+description = ""
+authors = ["Hassan Pouralijan <pouralijan@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+PyYAML = "^6.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
